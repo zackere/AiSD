@@ -11,6 +11,7 @@ namespace AiSD
 		node<T> *head, *tail;
 		int size;
 		void SwapNodes(node<T> &p1, node<T> &p2);
+		void RemoveNode(node<T> &p);
 	public:
 		List();
 		List(const List<T> &list);
@@ -76,6 +77,19 @@ namespace AiSD
 		}
 	}
 	template<class T>
+	void List<T>::RemoveNode(node<T> &p)
+	{
+		if (this->head == &p) this->PopFront();
+		else if (this->tail == &p) this->PopBack();
+		else
+		{
+			this->size--;
+			p.prev->next = p.next;
+			p.next->prev = p.prev;
+			delete &p;
+		}
+	}
+	template<class T>
 	List<T>::List() :head(nullptr), tail(nullptr),size(0) {}
 	template<class T>
 	List<T>::List(const List<T>& list)
@@ -94,15 +108,14 @@ namespace AiSD
 		list.tail = nullptr;
 		list.size = 0;
 	}
-	template<class T>
-	List<T>::~List()
-	{
+	template <class T>
+	List<T>::~List() {
 		if (this->head != nullptr)
 		{
 			node<T> *p1, *p2;
 			p1 = this->head;
 			p2 = p1->next;
-			while (p2 != nullptr)
+			while (p2 != nullptr) 
 			{
 				delete p1;
 				p1 = p2;
@@ -197,21 +210,11 @@ namespace AiSD
 	template<class T>
 	void List<T>::RemoveIf(function<bool(T)> UnaryPredicate)
 	{
-		while (this->head && UnaryPredicate(this->head->value)) this->PopFront();
-		while (this->tail && UnaryPredicate(this->tail->value)) this->PopBack();
-		if (this->head == nullptr) return;
-		node<T> *p = this->head->next;
-		while (p != nullptr)
+		node<T> **p = &this->head;
+		while (*p != nullptr)
 		{
-			if (UnaryPredicate(p->value))
-			{
-				p->prev->next = p->next;
-				p->next->prev = p->prev;
-				node<T>* tmp=p;
-				p = p->next;
-				delete tmp;
-			}
-			else p = p->next;
+			if (UnaryPredicate((*p)->value)) RemoveNode(**p);
+			else p = &((*p)->next);
 		}
 	}
 	template<class T>
