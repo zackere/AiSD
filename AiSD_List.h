@@ -13,6 +13,7 @@ namespace AiSD
 	public:
 		List();
 		List(const List<T> &list);
+		List(List<T> &&list);
 		~List();
 		int GetSize() const;
 		bool IsEmpty() const;
@@ -25,7 +26,8 @@ namespace AiSD
 
 		template<class T>
 		friend ostream& operator<<(ostream &out, const List<T> &list);
-		List<T>& operator=(const List<T>& list);
+		List<T>& operator=(const List<T> &list);
+		List<T>& operator=(List<T> &&list);
 	};
 	template<class T>
 	List<T>::List() :head(nullptr), tail(nullptr),size(0) {}
@@ -38,6 +40,13 @@ namespace AiSD
 			this->PushBack(p->value);
 			p = p->next;
 		}
+	}
+	template<class T>
+	List<T>::List(List<T>&& list):head(list.head),tail(list.tail),size(list.size)
+	{
+		list.head = nullptr;
+		list.tail = nullptr;
+		list.size = 0;
 	}
 	template<class T>
 	List<T>::~List()
@@ -171,6 +180,21 @@ namespace AiSD
 				this->PushBack(p->value);
 				p = p->next;
 			}
+		}
+		return *this;
+	}
+	template<class T>
+	List<T>& List<T>::operator=(List<T> &&list)
+	{
+		if (this != &list)
+		{
+			this->Clear();
+			this->head = list.head;
+			this->tail = list.tail;
+			this->size = list.size;
+			list.head = nullptr;
+			list.tail = nullptr;
+			list.size = 0;
 		}
 		return *this;
 	}
