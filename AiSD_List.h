@@ -10,6 +10,7 @@ namespace AiSD
 	{
 		node<T> *head, *tail;
 		int size;
+		void SwapNodes(node<T> &p1, node<T> &p2);
 	public:
 		List();
 		List(const List<T> &list);
@@ -23,12 +24,21 @@ namespace AiSD
 		void PopBack();
 		void Clear();
 		void RemoveIf(function<bool(T)> UnaryPredicate);
+		void BubbleSort();
 
 		template<class T>
 		friend ostream& operator<<(ostream &out, const List<T> &list);
 		List<T>& operator=(const List<T> &list);
 		List<T>& operator=(List<T> &&list);
 	};
+	template<class T>
+	void List<T>::SwapNodes(node<T> &p1, node<T> &p2)
+	{
+		if (&p1 == &p2) return;
+		swap(p1, p2);
+		swap(p1.next, p2.next);
+		swap(p1.prev, p2.prev);
+	}
 	template<class T>
 	List<T>::List() :head(nullptr), tail(nullptr),size(0) {}
 	template<class T>
@@ -169,6 +179,22 @@ namespace AiSD
 		}
 	}
 	template<class T>
+	void List<T>::BubbleSort()
+	{
+		node<T> *p = this->head;
+		node<T> *bound = this->tail;
+		while (bound!=this->head)
+		{
+			if (p == bound)
+			{
+				p = this->head;
+				bound = bound->prev;
+			}
+			if (p->value > p->next->value) SwapNodes(*p, *(p->next));
+			p = p->next;
+		}
+	}
+	template<class T>
 	List<T>& List<T>::operator=(const List<T> &list)
 	{
 		if (this != &list)
@@ -204,7 +230,7 @@ namespace AiSD
 		node<T>* p = list.head;
 		while (p != nullptr)
 		{
-			out << (*p) << " ";
+			out << *p << " ";
 			p = p->GetNext();
 		}
 		return out;

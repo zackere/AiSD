@@ -10,6 +10,7 @@ namespace AiSD
 		friend class List<T>;
 		T value;
 		node<T> *prev, *next;
+
 		node(T value, node<T> *prev, node<T> *next);
 		template<class T>
 		friend ostream& operator<<(ostream &out, const node<T> &node);
