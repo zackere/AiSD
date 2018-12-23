@@ -125,8 +125,8 @@ namespace AiSD
 	template<class T>
 	void List<T>::PopFront()
 	{
-		this->size--;
 		if (this->head == nullptr) return;
+		this->size--;
 		if (this->head == this->tail)
 		{
 			delete this->head;
@@ -142,8 +142,8 @@ namespace AiSD
 	template<class T>
 	void List<T>::PopBack()
 	{
-		this->size--;
 		if (this->head == nullptr) return;
+		this->size--;
 		if (this->head == this->tail)
 		{
 			delete this->head;
@@ -164,8 +164,8 @@ namespace AiSD
 	template<class T>
 	void List<T>::RemoveIf(function<bool(T)> UnaryPredicate)
 	{
-		while (UnaryPredicate(this->head->value)) this->PopFront();
-		while (UnaryPredicate(this->tail->value)) this->PopBack();
+		while (this->head && UnaryPredicate(this->head->value)) this->PopFront();
+		while (this->tail && UnaryPredicate(this->tail->value)) this->PopBack();
 		if (this->head == nullptr) return;
 		node<T> *p = this->head->next;
 		while (p != nullptr)
