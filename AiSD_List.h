@@ -35,9 +35,45 @@ namespace AiSD
 	void List<T>::SwapNodes(node<T> &p1, node<T> &p2)
 	{
 		if (&p1 == &p2) return;
-		swap(p1, p2);
-		swap(p1.next, p2.next);
-		swap(p1.prev, p2.prev);
+		if (this->head == &p1) this->head = &p2;
+		else if (this->head == &p2) this->head = &p1;
+		if (this->tail == &p1) this->tail = &p2;
+		else if (this->tail == &p2) this->tail = &p1;
+		if (p1.next == &p2)
+		{
+			if (p1.prev != nullptr) p1.prev->next = &p2;
+			if (p2.next != nullptr) p2.next->prev = &p1;
+			node<T> *pom1 = p1.prev, *pom2 = p2.next;
+			p1.prev = &p2;
+			p1.next = pom2;
+			p2.prev = pom1;
+			p2.next = &p1;
+			
+		}
+		else if (p1.prev == &p2)
+		{
+			if (p2.prev != nullptr) p2.prev->next = &p1;
+			if (p1.next != nullptr) p1.next->prev = &p2;
+			node<T> *pom1 = p2.prev, *pom2 = p1.next;
+			p2.prev = &p1;
+			p2.next = pom2;
+			p1.prev = pom1;
+			p1.next = &p2;
+		}
+		else
+		{
+			node<T> *pom1 = p1.prev, *pom2 = p1.next;
+			node<T> *pom3 = p2.prev, *pom4 = p2.next;
+			if (p1.prev != nullptr) p1.prev->next = &p2;
+			if (p1.next != nullptr) p1.next->prev = &p2;
+			if (p2.prev != nullptr) p2.prev->next = &p1;
+			if (p2.next != nullptr) p2.next->prev = &p1;
+			p1.prev = pom3;
+			p1.next = pom4;
+			p2.prev = pom1;
+			p2.next = pom2;
+
+		}
 	}
 	template<class T>
 	List<T>::List() :head(nullptr), tail(nullptr),size(0) {}
@@ -181,17 +217,18 @@ namespace AiSD
 	template<class T>
 	void List<T>::BubbleSort()
 	{
-		node<T> *p = this->head;
-		node<T> *bound = this->tail;
-		while (bound!=this->head)
+		node<T> **p = &this->head;
+		node<T> **bound = &this->tail;
+		while (*bound != this->head)
 		{
-			if (p == bound)
+			if (*p==*bound)
 			{
-				p = this->head;
-				bound = bound->prev;
+				p = &this->head;
+				bound = &((*bound)->prev);
+				continue;
 			}
-			if (p->value > p->next->value) SwapNodes(*p, *(p->next));
-			p = p->next;
+			else if ((*p)->value > (*p)->next->value) SwapNodes(**p,*(*p)->next);
+			p = &((*p)->next);
 		}
 	}
 	template<class T>
