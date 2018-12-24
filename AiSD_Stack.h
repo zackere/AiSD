@@ -10,7 +10,7 @@ namespace AiSD
 		List<T> values;
 	public:
 		void Push(T elem);
-		void Pop(T elem);
+		T Pop(T elem);
 		template<class T>
 		friend ostream& operator<<(ostream &out, const Stack<T> &stack);
 	};
@@ -20,9 +20,11 @@ namespace AiSD
 		this->values.PushFront(elem);
 	}
 	template<class T>
-	void Stack<T>::Pop(T elem)
+	T Stack<T>::Pop(T elem)
 	{
+		T ret = this->values->GetFront();
 		this->values.PopFront();
+		return ret;
 	}
 	template<class T>
 	ostream & operator<<(ostream & out, const Stack<T>& stack)

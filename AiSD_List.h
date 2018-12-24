@@ -28,6 +28,8 @@ namespace AiSD
 		void RemoveIf(function<bool(T)> UnaryPredicate);
 		void BubbleSort();
 		void InsertionSort();
+		T GetFront();
+		T GetBack();
 
 		template<class T>
 		friend ostream& operator<<(ostream &out, const List<T> &list);
@@ -254,6 +256,16 @@ namespace AiSD
 			SwapNodes(*(*j)->prev, **j);
 			j = &((*j)->prev);
 		}
+	}
+	template<class T>
+	T List<T>::GetFront()
+	{
+		return this->head->value;
+	}
+	template<class T>
+	T List<T>::GetBack()
+	{
+		this->tail->value;
 	}
 	template<class T>
 	List<T>& List<T>::operator=(const List<T> &list)
