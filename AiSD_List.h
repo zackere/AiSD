@@ -120,19 +120,7 @@ namespace AiSD
 	}
 	template <class T>
 	List<T>::~List() {
-		if (this->head != nullptr)
-		{
-			node<T> *p1, *p2;
-			p1 = this->head;
-			p2 = p1->next;
-			while (p2 != nullptr) 
-			{
-				delete p1;
-				p1 = p2;
-				p2 = p2->next;
-			}
-			delete p1;
-		}
+		this->Clear();
 	}
 	template<class T>
 	int List<T>::GetSize() const
