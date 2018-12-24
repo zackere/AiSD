@@ -248,7 +248,6 @@ namespace AiSD
 	void List<T>::InsertionSort()
 	{
 		if (this->head == this->tail) return;
-		this->PushBack(T());
 		node<T> **i = &this->head->next;
 		node<T> **j;
 		while (*i != nullptr)
@@ -261,7 +260,12 @@ namespace AiSD
 			}
 			i = &((*i)->next);
 		}
-		this->PopBack();
+		j = &this->tail;
+		while ((*j)->prev != nullptr && (*j)->prev->value > (*j)->value)
+		{
+			SwapNodes(*(*j)->prev, **j);
+			j = &((*j)->prev);
+		}
 	}
 	template<class T>
 	List<T>& List<T>::operator=(const List<T> &list)
