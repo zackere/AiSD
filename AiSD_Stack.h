@@ -9,8 +9,10 @@ namespace AiSD
 	{
 		List<T> values;
 	public:
+		Stack() = default;
 		void Push(T elem);
-		T Pop(T elem);
+		T Pop();
+		bool IsEmpty();
 		template<class T>
 		friend ostream& operator<<(ostream &out, const Stack<T> &stack);
 	};
@@ -20,11 +22,16 @@ namespace AiSD
 		this->values.PushFront(elem);
 	}
 	template<class T>
-	T Stack<T>::Pop(T elem)
+	T Stack<T>::Pop()
 	{
 		T ret = this->values->GetFront();
 		this->values.PopFront();
 		return ret;
+	}
+	template<class T>
+	bool Stack<T>::IsEmpty()
+	{
+		return this->values->IsEmpty();
 	}
 	template<class T>
 	ostream & operator<<(ostream & out, const Stack<T>& stack)
