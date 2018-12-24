@@ -31,7 +31,7 @@ namespace AiSD
 	template<class T>
 	bool Stack<T>::IsEmpty()
 	{
-		return this->values->IsEmpty();
+		return this->values.IsEmpty();
 	}
 	template<class T>
 	ostream & operator<<(ostream & out, const Stack<T>& stack)
