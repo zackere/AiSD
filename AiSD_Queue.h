@@ -19,19 +19,19 @@ namespace AiSD
 	template<class T>
 	void Queue<T>::Push(T elem)
 	{
-		this->values->PushBack(elem);
+		this->values.PushBack(elem);
 	}
 	template<class T>
 	T Queue<T>::Pop()
 	{
 		T ret = this->values->GetFront();
-		this->values->PopFront();
+		this->values.PopFront();
 		return ret;
 	}
 	template<class T>
 	bool Queue<T>::IsEmpty()
 	{
-		return this->values->IsEmpty();
+		return this->values.IsEmpty();
 	}
 	template<class T>
 	ostream & operator<<(ostream & out, const Queue<T>& queue)
