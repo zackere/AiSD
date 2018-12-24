@@ -12,6 +12,7 @@ namespace AiSD
 		int size;
 		void SwapNodes(node<T> &p1, node<T> &p2);
 		void RemoveNode(node<T> &p);
+		node<T>& operator[](int n);
 	public:
 		List();
 		List(const List<T> &list);
@@ -26,6 +27,7 @@ namespace AiSD
 		void Clear();
 		void RemoveIf(function<bool(T)> UnaryPredicate);
 		void BubbleSort();
+		void InsertionSort();
 
 		template<class T>
 		friend ostream& operator<<(ostream &out, const List<T> &list);
@@ -88,6 +90,14 @@ namespace AiSD
 			p.next->prev = p.prev;
 			delete &p;
 		}
+	}
+	template<class T>
+	node<T>& List<T>::operator[](int n)
+	{
+		if (this->size < n)throw exception("Index out of bounds");
+		node<T> *p = this->head;
+		for (int i = 0; i < n; i++)p = p->next;
+		return*p;
 	}
 	template<class T>
 	List<T>::List() :head(nullptr), tail(nullptr),size(0) {}
@@ -233,6 +243,25 @@ namespace AiSD
 			else if ((*p)->value > (*p)->next->value) SwapNodes(**p,*(*p)->next);
 			p = &((*p)->next);
 		}
+	}
+	template<class T>
+	void List<T>::InsertionSort()
+	{
+		if (this->head == this->tail) return;
+		this->PushBack(T());
+		node<T> **i = &this->head->next;
+		node<T> **j;
+		while (*i != nullptr)
+		{
+			j = &((*i)->prev);
+			while ((*j)->prev != nullptr && (*j)->prev->value > (*j)->value)
+			{
+				SwapNodes(*(*j)->prev,**j);
+				j = &((*j)->prev);
+			}
+			i = &((*i)->next);
+		}
+		this->PopBack();
 	}
 	template<class T>
 	List<T>& List<T>::operator=(const List<T> &list)
