@@ -59,7 +59,7 @@ namespace AiSD
 		data = new T[n + 1]; 
 		size = 0;
 		max_size = n;
-		data[0] = numeric_limits<int>::max();
+		data[0] = numeric_limits<T>::max(); //for non-specialized types its T();
 	}
 	template<class T>
 	Heap<T>::~Heap()
