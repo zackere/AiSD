@@ -4,3 +4,4 @@ Znajdują się tu implementacje (w C++) struktur danych i algorytmów omówionyc
 * Lista
 * Stos
 * Kolejka
+* Kopiec
