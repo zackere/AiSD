@@ -34,7 +34,7 @@ namespace AiSD
 		return this->values.IsEmpty();
 	}
 	template<class T>
-	ostream & operator<<(ostream & out, const Queue<T>& queue)
+	ostream& operator<<(ostream &out, const Queue<T> &queue)
 	{
 		out << queue.values;
 		return out;
