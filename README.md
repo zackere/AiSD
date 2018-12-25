@@ -8,4 +8,4 @@ This repository contains implemented in C++ data structures discussed on course 
 
 TODO: Intensive testing
 #### Authors:
-Wojciech Replin. Email me at: zackere@wp.pl
+Wojciech Replin. Email me at: wo1001@wp.pl
