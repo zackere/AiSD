@@ -19,11 +19,9 @@ namespace AiSD
 		void Insert(T elem);
 		T Max();
 		T DeleteMax();
-		//TODO:
-		//T Delete(int i);
-		//T Replace(int i, int v);
-		//T Repalce(int i, int j);
-		//T Search(int v);
+		T Delete(int i);
+		T Replace(int i, T v);
+		int Search(T v);
 		template<class T>
 		friend ostream& operator<<(ostream &out, const Heap<T> &heap);
 	};
@@ -100,15 +98,41 @@ namespace AiSD
 	template<class T>
 	T Heap<T>::DeleteMax()
 	{
-		if (this->size == 0)throw exception("Heap is empty");
-		T ret = move(this->data[1]);
-		this->data[1] = move(this->data[size--]);
-		this->DownHeap(1);
+		if (this->size == 0) throw exception("Heap is empty");
+		return this->Delete(0);
+	}
+	template<class T>
+	T Heap<T>::Delete(int i)
+	{
+		if (i < 0 || i > this->size) throw exception("Bad index");
+		T ret = move(this->data[i + 1]);
+		this->data[i + 1] = move(this->data[this->size--]);
+		this->DownHeap(i + 1);
 		return ret;
+	}
+	template<class T>
+	T Heap<T>::Replace(int i, T v)
+	{
+		if (i < 0 || i > this->size) throw exception("Bad index");
+		int sgn = (v > this->data[i]) ? 1 : -1;
+		T ret = move(this->data[i + 1]);
+		cout << endl;
+		this->data[i + 1] = v;
+		cout << endl;
+		if (sgn == 1) this->UpHeap(i + 1);
+		else this->DownHeap(i + 1);
+		return ret;
+	}
+	template<class T>
+	int Heap<T>::Search(T v)
+	{
+		for (int i = 1; i <= this->size; i++) if (this->data[i] == v) return i - 1;
+		return -1;
 	}
 	template<class T>
 	ostream & operator<<(ostream & out, const Heap<T>& heap)
 	{
+		cout << "Heap size: " << heap.size << endl;
 		for (int i = 1; i <= heap.size; i++) out << heap.data[i] << " ";
 		return out;
 	}
