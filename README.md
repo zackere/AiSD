@@ -5,6 +5,7 @@ This repository contains implemented in C++ data structures discussed on course 
 * Stack
 * Queue
 * Heap
+* Beap (in progess)
 
 TODO: Intensive testing
 #### Authors:
