@@ -96,7 +96,7 @@ namespace AiSD
 	template<class T>
 	node<T>& List<T>::operator[](int n)
 	{
-		if (this->size < n)throw exception("Index out of bounds");
+		if (n < 0 || this->size < n)throw exception("Index out of bounds");
 		node<T> *p = this->head;
 		for (int i = 0; i < n; i++)p = p->next;
 		return*p;
