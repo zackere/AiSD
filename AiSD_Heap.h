@@ -14,10 +14,16 @@ namespace AiSD
 		void DownHeap(int i);
 	public:
 		Heap(int n=0);
+		Heap(T *data, int datasize, int maxsize);
 		~Heap();
 		void Insert(T elem);
 		T Max();
 		T DeleteMax();
+		//TODO:
+		//T Delete(int i);
+		//T Replace(int i, int v);
+		//T Repalce(int i, int j);
+		//T Search(int v);
 		template<class T>
 		friend ostream& operator<<(ostream &out, const Heap<T> &heap);
 	};
@@ -56,10 +62,22 @@ namespace AiSD
 	Heap<T>::Heap(int n)
 	{
 		if (n < 0) throw exception("Bad Heap size");
-		data = new T[n + 1]; 
-		size = 0;
-		max_size = n;
-		data[0] = numeric_limits<T>::max(); //for non-specialized types its T();
+		this->data = new T[n + 1]; 
+		this->size = 0;
+		this->max_size = n;
+		this->data[0] = numeric_limits<T>::max(); //for non-specialized types its T();
+	}
+	template<class T>
+	Heap<T>::Heap(T * data, int datasize, int maxsize)
+	{
+		if (maxsize < 0) throw exception("Bad Heap size");
+		if (datasize <= 0 || datasize > maxsize) throw exception("Bad data size");
+		this->data = new int[maxsize + 1];
+		this->size = datasize;
+		this->max_size = maxsize;
+		this->data[0] = numeric_limits<T>::max();
+		for (int i = 1; i <= datasize; i++) this->data[i] = data[i - 1];
+		for (int i = this->size / 2; i >= 1; i--) this->DownHeap(i);
 	}
 	template<class T>
 	Heap<T>::~Heap()
@@ -76,13 +94,13 @@ namespace AiSD
 	template<class T>
 	T Heap<T>::Max()
 	{
-		if (this->size == 0) throw exception("Heap empty");
+		if (this->size == 0) throw exception("Heap is empty");
 		return this->data[1];
 	}
 	template<class T>
 	T Heap<T>::DeleteMax()
 	{
-		if (this->size == 0)throw exception("Heap empty");
+		if (this->size == 0)throw exception("Heap is empty");
 		T ret = move(this->data[1]);
 		this->data[1] = move(this->data[size--]);
 		this->DownHeap(1);
