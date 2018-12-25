@@ -7,3 +7,5 @@ This repository contains implemented in C++ data structures discussed on course 
 * Heap
 
 TODO: Intensive testing
+#### Authors:
+Wojciech Replin wo1001@wp.pl
