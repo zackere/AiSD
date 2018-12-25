@@ -27,4 +27,13 @@ namespace AiSD
 		return out;
 	}
 
+	template<class T>
+	class PriorityQueue
+	{
+	public:
+		virtual void Insert(T elem) = 0;
+		virtual T Max() = 0;
+		virtual T DeleteMax()=0;
+	};
+
 }

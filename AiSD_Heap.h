@@ -1,11 +1,12 @@
 #pragma once
+#include "AiSD_Utilities.h"
 #include <iostream>
 #include <limits>
 using namespace std;
 namespace AiSD
 {
 	template<class T>
-	class Heap
+	class Heap :public PriorityQueue<T>
 	{
 		T *data; //max_size+1 elements, data[0] is a sentinel
 		int size;
@@ -13,7 +14,7 @@ namespace AiSD
 		void UpHeap(int i);
 		void DownHeap(int i);
 	public:
-		Heap(int n=0);
+		Heap(int maxsize=0);
 		Heap(T *data, int datasize, int maxsize);
 		~Heap();
 		void Insert(T elem);
@@ -57,12 +58,12 @@ namespace AiSD
 		this->data[i] = move(val);
 	}
 	template<class T>
-	Heap<T>::Heap(int n)
+	Heap<T>::Heap(int maxsize)
 	{
-		if (n < 0) throw exception("Bad Heap size");
-		this->data = new T[n + 1]; 
+		if (maxsize < 0) throw exception("Bad Heap size");
+		this->data = new T[maxsize + 1]; 
 		this->size = 0;
-		this->max_size = n;
+		this->max_size = maxsize;
 		this->data[0] = numeric_limits<T>::max(); //for non-specialized types its T();
 	}
 	template<class T>
