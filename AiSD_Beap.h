@@ -21,6 +21,7 @@ namespace AiSD
 		void Insert(T elem);
 		T Max() { return T(); }
 		T DeleteMax() { return T(); }
+		T operator[](int i);
 		template<class T>
 		friend ostream& operator<<(ostream &out, const Beap<T> &beap);
 	};
@@ -97,6 +98,12 @@ namespace AiSD
 		if (this->size == this->max_size) throw exception("Beap is full");
 		this->data[++this->size] = elem;
 		this->UpBeap(this->size);
+	}
+	template<class T>
+	T Beap<T>::operator[](int i)
+	{
+		if (i >= 0 && i < this->size) return this->data[i + 1];
+		throw exception("Index out of bounds");
 	}
 	template<class T>
 	ostream & operator<<(ostream & out, const Beap<T>& beap)

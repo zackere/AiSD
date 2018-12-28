@@ -23,6 +23,7 @@ namespace AiSD
 		T Delete(int i);
 		T Replace(int i, T v);
 		int Search(T v);
+		T operator[](int i);
 		template<class T>
 		friend ostream& operator<<(ostream &out, const Heap<T> &heap);
 	};
@@ -129,6 +130,12 @@ namespace AiSD
 	{
 		for (int i = 1; i <= this->size; i++) if (this->data[i] == v) return i - 1;
 		return -1;
+	}
+	template<class T>
+	T Heap<T>::operator[](int i)
+	{
+		if (i >= 0 && i < this->size) return this->data[i + 1];
+		throw exception("Index out of bounds");
 	}
 	template<class T>
 	ostream & operator<<(ostream & out, const Heap<T>& heap)
