@@ -5,27 +5,35 @@ namespace AiSD
 {
 	template<class T> class List;
 	template<class T>
-	class node
+	class ListNode
 	{
 		friend class List<T>;
 		T value;
-		node<T> *prev, *next;
+		ListNode<T> *prev, *next;
 
-		node(T value, node<T> *prev, node<T> *next);
+		ListNode(T value, ListNode<T> *prev, ListNode<T> *next);
 		template<class T>
-		friend ostream& operator<<(ostream &out, const node<T> &node);
+		friend ostream& operator<<(ostream &out, const ListNode<T> &node);
 	public:
-		node<T>* GetNext() { return this->next; }
-		node<T>* GetPrev() { return this->prev; }
+		ListNode<T>* GetNext() { return this->next; }
+		ListNode<T>* GetPrev() { return this->prev; }
 	};
 	template<class T>
-	node<T>::node(T value, node<T> *prev, node<T> *next) :value(value), prev(prev), next(next) {}
+	ListNode<T>::ListNode(T value, ListNode<T> *prev, ListNode<T> *next) :value(value), prev(prev), next(next) {}
 	template<class T>
-	ostream & operator<<(ostream & out, const node<T>& node)
+	ostream & operator<<(ostream & out, const ListNode<T>& node)
 	{
 		out << node.value;
 		return out;
 	}
+
+	template<class T>
+	class LeftistHeapNode
+	{
+		T key;
+		LeftistHeapNode<T> *left, *right;
+		int npl;
+	};
 
 	template<class T>
 	class PriorityQueue

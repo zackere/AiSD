@@ -2,23 +2,22 @@
 #include "AiSD_Utilities.h"
 #include <iostream>
 #include <functional>
-using namespace std;
 namespace AiSD
 {
 	template<class T>
 	class List
 	{
-		node<T> *head, *tail;
-		int size;
-		void SwapNodes(node<T> &p1, node<T> &p2);
-		void RemoveNode(node<T> &p);
-		node<T>& operator[](int n);
+		ListNode<T> *head, *tail;
+		unsigned int size;
+		void SwapNodes(ListNode<T> &p1, ListNode<T> &p2);
+		void RemoveNode(ListNode<T> &p);
+		ListNode<T>& operator[](unsigned int n);
 	public:
 		List();
 		List(const List<T> &list);
 		List(List<T> &&list);
 		~List();
-		int GetSize() const;
+		unsigned int GetSize() const;
 		bool IsEmpty() const;
 		void PushFront(T elem);
 		void PushBack(T elem);
@@ -28,16 +27,24 @@ namespace AiSD
 		void RemoveIf(function<bool(T)> UnaryPredicate);
 		void BubbleSort();
 		void InsertionSort();
-		T GetFront();
-		T GetBack();
+		T GetFront() const;
+		T GetBack() const;
 
 		template<class T>
-		friend ostream& operator<<(ostream &out, const List<T> &list);
+		friend std::ostream& operator<<(std::ostream &out, const List<T> &list);
 		List<T>& operator=(const List<T> &list);
 		List<T>& operator=(List<T> &&list);
+
+		class iterator
+		{
+		public:
+			iterator();
+			iterator(const iterator &it);
+			~iterator();
+		};
 	};
 	template<class T>
-	void List<T>::SwapNodes(node<T> &p1, node<T> &p2)
+	void List<T>::SwapNodes(ListNode<T> &p1, ListNode<T> &p2)
 	{
 		if (&p1 == &p2) return;
 		if (this->head == &p1) this->head = &p2;
@@ -48,7 +55,7 @@ namespace AiSD
 		{
 			if (p1.prev != nullptr) p1.prev->next = &p2;
 			if (p2.next != nullptr) p2.next->prev = &p1;
-			node<T> *pom1 = p1.prev, *pom2 = p2.next;
+			ListNode<T> *pom1 = p1.prev, *pom2 = p2.next;
 			p1.prev = &p2;
 			p1.next = pom2;
 			p2.prev = pom1;
@@ -59,7 +66,7 @@ namespace AiSD
 		{
 			if (p2.prev != nullptr) p2.prev->next = &p1;
 			if (p1.next != nullptr) p1.next->prev = &p2;
-			node<T> *pom1 = p2.prev, *pom2 = p1.next;
+			ListNode<T> *pom1 = p2.prev, *pom2 = p1.next;
 			p2.prev = &p1;
 			p2.next = pom2;
 			p1.prev = pom1;
@@ -67,8 +74,8 @@ namespace AiSD
 		}
 		else
 		{
-			node<T> *pom1 = p1.prev, *pom2 = p1.next;
-			node<T> *pom3 = p2.prev, *pom4 = p2.next;
+			ListNode<T> *pom1 = p1.prev, *pom2 = p1.next;
+			ListNode<T> *pom3 = p2.prev, *pom4 = p2.next;
 			if (p1.prev != nullptr) p1.prev->next = &p2;
 			if (p1.next != nullptr) p1.next->prev = &p2;
 			if (p2.prev != nullptr) p2.prev->next = &p1;
@@ -77,11 +84,10 @@ namespace AiSD
 			p1.next = pom4;
 			p2.prev = pom1;
 			p2.next = pom2;
-
 		}
 	}
 	template<class T>
-	void List<T>::RemoveNode(node<T> &p)
+	void List<T>::RemoveNode(ListNode<T> &p)
 	{
 		if (this->head == &p) this->PopFront();
 		else if (this->tail == &p) this->PopBack();
@@ -94,10 +100,10 @@ namespace AiSD
 		}
 	}
 	template<class T>
-	node<T>& List<T>::operator[](int n)
+	ListNode<T>& List<T>::operator[](unsigned int n)
 	{
-		if (n < 0 || this->size < n)throw exception("Index out of bounds");
-		node<T> *p = this->head;
+		if (this->size < n)throw exception("Index out of bounds");
+		ListNode<T> *p = this->head;
 		for (int i = 0; i < n; i++)p = p->next;
 		return*p;
 	}
@@ -106,7 +112,7 @@ namespace AiSD
 	template<class T>
 	List<T>::List(const List<T>& list)
 	{
-		node<T> *p = list.head;
+		ListNode<T> *p = list.head;
 		while (p != nullptr)
 		{
 			this->PushBack(p->value);
@@ -125,7 +131,7 @@ namespace AiSD
 		this->Clear();
 	}
 	template<class T>
-	int List<T>::GetSize() const
+	unsigned int List<T>::GetSize() const
 	{
 		return this->size;
 	}
@@ -138,7 +144,7 @@ namespace AiSD
 	void List<T>::PushFront(T elem)
 	{
 		this->size++;
-		node<T> *p = new node<T>(elem, nullptr, nullptr);
+		ListNode<T> *p = new ListNode<T>(elem, nullptr, nullptr);
 		if (this->head == nullptr)
 		{
 			this->head = p;
@@ -155,7 +161,7 @@ namespace AiSD
 	void List<T>::PushBack(T elem)
 	{
 		this->size++;
-		node<T> *p = new node<T>(elem, nullptr, nullptr);
+		ListNode<T> *p = new ListNode<T>(elem, nullptr, nullptr);
 		if (this->head == nullptr)
 		{
 			this->head = p;
@@ -180,7 +186,7 @@ namespace AiSD
 			this->tail = nullptr;
 			return;
 		}
-		node<T> *p = this->head->next;
+		ListNode<T> *p = this->head->next;
 		delete this->head;
 		this->head = p;
 		this->head->prev = nullptr;
@@ -197,7 +203,7 @@ namespace AiSD
 			this->tail = nullptr;
 			return;
 		}
-		node<T> *p = this->tail->prev;
+		ListNode<T> *p = this->tail->prev;
 		delete this->tail;
 		this->tail = p;
 		this->tail->next = nullptr;
@@ -210,7 +216,7 @@ namespace AiSD
 	template<class T>
 	void List<T>::RemoveIf(function<bool(T)> UnaryPredicate)
 	{
-		node<T> **p = &this->head;
+		ListNode<T> **p = &this->head;
 		while (*p != nullptr)
 		{
 			if (UnaryPredicate((*p)->value)) RemoveNode(**p);
@@ -220,8 +226,8 @@ namespace AiSD
 	template<class T>
 	void List<T>::BubbleSort()
 	{
-		node<T> **p = &this->head;
-		node<T> **bound = &this->tail;
+		ListNode<T> **p = &this->head;
+		ListNode<T> **bound = &this->tail;
 		while (*bound != this->head)
 		{
 			if (*p==*bound)
@@ -238,8 +244,8 @@ namespace AiSD
 	void List<T>::InsertionSort()
 	{
 		if (this->head == this->tail) return;
-		node<T> **i = &this->head->next;
-		node<T> **j;
+		ListNode<T> **i = &this->head->next;
+		ListNode<T> **j;
 		while (*i != nullptr)
 		{
 			j = &((*i)->prev);
@@ -258,12 +264,12 @@ namespace AiSD
 		}
 	}
 	template<class T>
-	T List<T>::GetFront()
+	T List<T>::GetFront() const
 	{
 		return this->head->value;
 	}
 	template<class T>
-	T List<T>::GetBack()
+	T List<T>::GetBack() const
 	{
 		this->tail->value;
 	}
@@ -273,7 +279,7 @@ namespace AiSD
 		if (this != &list)
 		{
 			this->Clear();
-			node<T> *p = list.head;
+			ListNode<T> *p = list.head;
 			while (p != nullptr)
 			{
 				this->PushBack(p->value);
@@ -298,9 +304,9 @@ namespace AiSD
 		return *this;
 	}
 	template<class T>
-	ostream & operator<<(ostream &out, const List<T> &list)
+	std::ostream & operator<<(std::ostream &out, const List<T> &list)
 	{
-		node<T>* p = list.head;
+		ListNode<T>* p = list.head;
 		while (p != nullptr)
 		{
 			out << *p << " ";

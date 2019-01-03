@@ -16,13 +16,17 @@ namespace AiSD
 	public:
 		Heap(int maxsize=0);
 		Heap(T *data, int datasize, int maxsize);
+		Heap(const Heap<T> &h);
+		Heap(Heap<T> &&h);
+		Heap<T>& operator=(const Heap<T> &h);
+		Heap<T>& operator=(Heap<T> &&h);
 		~Heap();
 		void Insert(T elem);
 		T Max();
 		T DeleteMax();
 		T Delete(int i);
 		T Replace(int i, T v);
-		int Search(T v);
+		int Search(const T &v);
 		T operator[](int i);
 		template<class T>
 		friend ostream& operator<<(ostream &out, const Heap<T> &heap);
@@ -80,6 +84,49 @@ namespace AiSD
 		for (int i = this->size / 2; i >= 1; i--) this->DownHeap(i);
 	}
 	template<class T>
+	Heap<T>::Heap(const Heap<T> &h)
+	{
+		this->data = new T[h.max_size + 1];
+		this->size = h.size;
+		this->max_size = h.max_size;
+		for (int i = 0; i <= h.size; i++) this->data[i] = h.data[i];
+	}
+	template<class T>
+	Heap<T>::Heap(Heap<T>&& h):data(h.data),size(h.size),max_size(h.max_size)
+	{
+		h.data = nullptr;
+		h.size = 0;
+		h.max_size = 0;
+	}
+	template<class T>
+	Heap<T>& Heap<T>::operator=(const Heap<T> &h)
+	{
+		if (this != &h)
+		{
+			delete[] this->data;
+			this->data = new T[h.max_size + 1];
+			for (int i = 0; i <= h.size; i++) this->data[i] = h.data[i];
+			this->size = h.size;
+			this->max_size = h.max_size;
+		}
+		return *this;
+	}
+	template<class T>
+	Heap<T>& Heap<T>::operator=(Heap<T> &&h)
+	{
+		if (this != &h)
+		{
+			delete[] this->data;
+			this->data = h.data;
+			this->size = h.size;
+			this->max_size = h.max_size;
+			h.data = nullptr;
+			h.size = 0;
+			h.max_size = 0;
+		}
+		return *this;
+	}
+	template<class T>
 	Heap<T>::~Heap()
 	{
 		delete[] this->data;
@@ -126,7 +173,7 @@ namespace AiSD
 		return ret;
 	}
 	template<class T>
-	int Heap<T>::Search(T v)
+	int Heap<T>::Search(const T &v)
 	{
 		for (int i = 1; i <= this->size; i++) if (this->data[i] == v) return i - 1;
 		return -1;
