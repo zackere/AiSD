@@ -136,7 +136,7 @@ namespace AiSD
 	{
 		if (this->size == this->max_size) throw exception("Heap is full");
 		this->data[++this->size] = elem;
-		this->UpHeap(size);
+		this->UpHeap(this->size);
 	}
 	template<class T>
 	T Heap<T>::Max()
