@@ -7,6 +7,10 @@ This repository contains implemented in C++ data structures discussed on course 
 * Heap
 * Beap (in progess)
 
+## Implemented sorting algorithms:
+* None
+
+
 TODO: Intensive testing
 #### Authors:
 Wojciech Replin. Email me at: wo1001@wp.pl
