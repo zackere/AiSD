@@ -42,6 +42,7 @@ namespace AiSD
 		virtual void Insert(T elem) = 0;
 		virtual T Max() = 0;
 		virtual T DeleteMax()=0;
+		virtual ~PriorityQueue() {};
 	};
 
 }
