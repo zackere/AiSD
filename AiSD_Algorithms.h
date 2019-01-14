@@ -113,14 +113,14 @@ namespace AiSD
 	template<class T>
 	void Sort<T>::HeapSort(T *const &arr,const int &size)
 	{
-		AiSD::Heap<T> heap(arr, size, size);
-		for (int i = 0; i < size; i++) 
+		Heap<T> heap(arr, size, size);
+		for (int i = 0; i < size; i++)
 			arr[size - i - 1] = heap.DeleteMax();
 	}
 	template<class T>
 	void Sort<T>::MergeSort(T * const & arr, const int & size)
 	{
-		AiSD::List<int> indexlist;
+		List<int> indexlist;
 		indexlist.PushBack(0);
 		for (int i = 1; i < size; i++)
 			if (arr[i - 1] > arr[i])
