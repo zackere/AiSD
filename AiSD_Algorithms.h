@@ -72,8 +72,8 @@ namespace AiSD
 		{
 			int mid = (int)floor(((double)a + (double)b) / 2);
 			Concurrency::parallel_invoke(
-				[&] {MergeRP(arr, a, mid); },
-				[&] {MergeRP(arr, mid, b); }
+				[&] { MergeRP(arr, a, mid); },
+				[&] { MergeRP(arr, mid, b); }
 			);
 			Merge(arr, a, mid, b);
 		}
