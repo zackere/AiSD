@@ -8,8 +8,11 @@ This repository contains implemented in C++ data structures discussed on course 
 * Beap (in progess)
 
 ## Implemented sorting algorithms:
-* None
-
+* BubbleSort
+* InsertionSort
+* HeapSort
+* MergeSort
+* Parallel MergeSort (requires ppl.h library)
 
 TODO: Intensive testing
 #### Authors:
