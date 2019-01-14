@@ -1,7 +1,6 @@
 #pragma once
 
 #include <ppl.h>
-#include <thread> 
 
 #include "AiSD_Heap.h"
 #include "AiSD_List.h"
