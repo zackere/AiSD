@@ -89,6 +89,13 @@ namespace AiSD
 	template<class T>
 	int Sort<T>::Partition(T * const & arr, const int & l, const int & r, BinaryPredicate op)
 	{
+		int mid = (l + r) / 2;
+		if(op(arr[l],arr[mid]))
+			std::swap(arr[l], arr[mid]);
+		if (op(arr[l], arr[mid]))
+			std::swap(arr[l], arr[r]);
+		if (op(arr[r], arr[mid]))
+			std::swap(arr[r], arr[mid]);
 		T v = arr[r];
 		int i = l - 1;
 		for (int j = l; j < r; j++)
