@@ -7,62 +7,62 @@
 #include <functional>
 namespace AiSD
 {
-	template<class T>
+	template<class T, class BinaryPredicate = std::function<bool(const T&, const T&)>>
 	class Sort
 	{
 		virtual void _() = 0;
-		static void Merge(T *const &arr, const int &a, const int &b, const int &c);
-		static void MergeRP(T *const &arr, const int &a, const int &b);
-		static int  Partition(T *const &arr, const int &l, const int &r, std::function<bool(const T&, const T&)> comp);
-		static void QuickSortR(T *const &arr, const int &l, const int &r, std::function<bool(const T&, const T&)> comp);
+		static void Merge(T *const &arr, const int &l, const int &mid, const int &r, BinaryPredicate op, BinaryPredicate eq);
+		static void MergeRP(T *const &arr, const int &l, const int &r, BinaryPredicate op, BinaryPredicate eq);
+		static int  Partition(T *const &arr, const int &l, const int &r, BinaryPredicate op);
+		static void QuickSortR(T *const &arr, const int &l, const int &r, BinaryPredicate op);
 	public:
 		// NOTE: after each of the algorithms arr is in nondecreasing order by default.
-		static void BubbleSort(T *const &arr,const int &size); // stable
-		static void InsertionSort(T *const &arr,const int &size); // stable
-		static void HeapSort(T *const &arr,const int &size); // unstable
-		static void MergeSort(T *const &arr, const int &size); // stable
-		static void MergeRPSort(T *const &arr, const int &size); // stable
-		static void QuickSort(T *const &arr, const int &size, std::function<bool(const T&,const T&)> comp=std::less<T>()); //stable
+		static void BubbleSort(T *const &arr, const int &size, BinaryPredicate op = std::greater<T>()); // stable
+		static void InsertionSort(T *const &arr, const int &size, BinaryPredicate op = std::greater<T>()); // stable
+		static void HeapSort(T *const &arr, const int &size, BinaryPredicate op = std::greater<T>()); // unstable
+		static void MergeSort(T *const &arr, const int &size, BinaryPredicate op = std::greater<T>(), BinaryPredicate eq = std::equal_to<T>()); // stable
+		static void MergeRPSort(T *const &arr, const int &size, BinaryPredicate op = std::greater<T>(), BinaryPredicate eq = std::equal_to<T>()); // stable
+		static void QuickSort(T *const &arr, const int &size, BinaryPredicate op = std::greater<T>()); //stable
 	};
-	template<class T>
-	void Sort<T>::Merge(T * const & arr, const int & a, const int & b, const int & c)
+	template<class T, class BinaryPredicate>
+	void Sort<T, BinaryPredicate>::Merge(T * const & arr, const int & l, const int & mid, const int & r, BinaryPredicate op, BinaryPredicate eq)
 	{
-		T *pom = new T[c - a];
-		for (int i = 0; i < c - a; i++) 
-			pom[i] = std::move(arr[a + i]);
-		int x = 0, y = b - a, i = a;
-		while (x < b - a && y < c - a)
+		T *pom = new T[r - l];
+		for (int i = 0; i < r - l; i++)
+			pom[i] = std::move(arr[l + i]);
+		int x = 0, y = mid - l, i = l;
+		while (x < mid - l && y < r - l)
 		{
-			if (pom[x] == pom[y])
+			if (eq(pom[x], pom[y]))
 			{
 				arr[i++] = std::move(pom[x++]);
 				arr[i++] = std::move(pom[y++]);
 			}
-			else 
-				if (pom[x] > pom[y])
-					arr[i++] = std::move(pom[y++]);
 			else
-				arr[i++] = std::move(pom[x++]);
+				if (op(pom[x], pom[y]))
+					arr[i++] = std::move(pom[y++]);
+				else
+					arr[i++] = std::move(pom[x++]);
 		}
-		if (x == b - a) 
-			while (y < c - a) 
+		if (x == mid - l)
+			while (y < r - l)
 				arr[i++] = std::move(pom[y++]);
-		else if (y == c - a) 
-			while (x < b - a) 
+		else if (y == r - l)
+			while (x < mid - l)
 				arr[i++] = std::move(pom[x++]);
 		delete[] pom;
 	}
-	template<class T>
-	void Sort<T>::MergeRP(T *const & arr, const int & a, const int & b)
+	template<class T, class BinaryPredicate>
+	void Sort<T, BinaryPredicate>::MergeRP(T *const & arr, const int & l, const int & r, BinaryPredicate op, BinaryPredicate eq)
 	{
-		if (b - a < 17)
+		if (r - l < 17)
 		{
 			int j, x;
-			for (int i = a + 1; i < b; i++)
+			for (int i = l + 1; i < r; i++)
 			{
 				j = i - 1;
 				x = std::move(arr[i]);
-				while (arr[j] > x && j >= a)
+				while (op(arr[j], x) && j >= l)
 				{
 					arr[j + 1] = std::move(arr[j]);
 					j--;
@@ -70,38 +70,42 @@ namespace AiSD
 				arr[j + 1] = x;
 			}
 		}
-		if (a + 1 < b)
+		if (l + 1 < r)
 		{
-			int mid = (int)floor(((double)a + (double)b) / 2);
+			int mid = (int)floor(((double)l + (double)r) / 2);
 			Concurrency::parallel_invoke(
-				[&] { MergeRP(arr, a, mid); },
-				[&] { MergeRP(arr, mid, b); }
+				[&] { MergeRP(arr, l, mid, op, eq); },
+				[&] { MergeRP(arr, mid, r, op, eq); }
 			);
-			Merge(arr, a, mid, b);
+			Merge(arr, l, mid, r, op, eq);
 		}
 	}
-	template<class T>
-	int Sort<T>::Partition(T * const & arr, const int & l, const int & r, std::function<bool(const T&, const T&)> comp)
+	template<class T, class BinaryPredicate>
+	int Sort<T, BinaryPredicate>::Partition(T * const & arr, const int & l, const int & r, BinaryPredicate op)
 	{
 		T v = arr[r];
 		int i = l - 1;
 		for (int j = l; j < r; j++)
 		{
-			if (!(comp(arr[j], v)))
+			if (!(op(arr[j], v)))
 				std::swap(arr[++i], arr[j]);
-			std::swap(arr[i + 1], arr[r]);
 		}
+		std::swap(arr[i + 1], arr[r]);
 		return i + 1;
 	}
-	template<class T>
-	void Sort<T>::QuickSortR(T * const & arr, const int & l, const int & r, std::function<bool(const T&, const T&)> comp)
+	template<class T, class BinaryPredicate>
+	void Sort<T, BinaryPredicate>::QuickSortR(T * const & arr, const int & l, const int & r, BinaryPredicate op)
 	{
-		int j = Sort<T>::Partition(arr,l, r, comp);
-		if (j - 1 > l) Sort<T>::QuickSortR(arr,l, j - 1, comp);
-		if (j + 1 < r) Sort<T>::QuickSortR(arr,j + 1, r, comp);
+		if (l < r)
+		{
+			int pivot = Sort<T, BinaryPredicate>::Partition(arr, l, r, op);
+			Sort<T, BinaryPredicate>::QuickSortR(arr, l, pivot - 1, op);
+			Sort<T, BinaryPredicate>::QuickSortR(arr, pivot + 1, r, op);
+		}
+		
 	}
-	template<class T>
-	void Sort<T>::BubbleSort(T *const &arr,const int &size)
+	template<class T, class BinaryPredicate>
+	void Sort<T, BinaryPredicate>::BubbleSort(T *const &arr, const int &size, BinaryPredicate op)
 	{
 		int newn = 0;
 		int bound = size;
@@ -109,7 +113,7 @@ namespace AiSD
 		{
 			newn = 0;
 			for (int i = 1; i < bound; i++)
-				if (arr[i - 1] > arr[i])
+				if (op(arr[i - 1], arr[i]))
 				{
 					std::swap(arr[i - 1], arr[i]);
 					newn = i; // after the last swap all elements are sorted and dont need be checked again
@@ -117,15 +121,15 @@ namespace AiSD
 			bound = newn;
 		}
 	}
-	template<class T>
-	void Sort<T>::InsertionSort(T *const &arr,const int &size)
+	template<class T, class BinaryPredicate>
+	void Sort<T, BinaryPredicate>::InsertionSort(T *const &arr, const int &size, BinaryPredicate op)
 	{
 		int j, x;
 		for (int i = 1; i < size; i++)
 		{
 			j = i - 1;
 			x = std::move(arr[i]);
-			while (arr[j] > x && j >= 0)
+			while (op(arr[j], x) && j >= 0)
 			{
 				arr[j + 1] = std::move(arr[j]);
 				j--;
@@ -133,20 +137,20 @@ namespace AiSD
 			arr[j + 1] = x;
 		}
 	}
-	template<class T>
-	void Sort<T>::HeapSort(T *const &arr,const int &size)
+	template<class T, class BinaryPredicate>
+	void Sort<T, BinaryPredicate>::HeapSort(T *const &arr, const int &size, BinaryPredicate op)
 	{
-		Heap<T> heap(arr, size, size);
+		Heap<T, BinaryPredicate> heap(arr, size, size, op);
 		for (int i = 0; i < size; i++)
 			arr[size - i - 1] = heap.DeleteMax();
 	}
-	template<class T>
-	void Sort<T>::MergeSort(T * const & arr, const int & size)
+	template<class T, class BinaryPredicate>
+	void Sort<T, BinaryPredicate>::MergeSort(T * const & arr, const int & size, BinaryPredicate op, BinaryPredicate eq)
 	{
 		List<int> indexlist;
 		indexlist.PushBack(0);
 		for (int i = 1; i < size; i++)
-			if (arr[i - 1] > arr[i])
+			if (op(arr[i - 1], arr[i]))
 				indexlist.PushBack(i);
 		indexlist.PushBack(size);
 		while (indexlist.GetSize() > 2)
@@ -154,19 +158,19 @@ namespace AiSD
 			int a = indexlist.GetFront(); indexlist.PopFront();
 			int b = indexlist.GetFront(); indexlist.PopFront();
 			int c = indexlist.GetFront(); indexlist.PopFront();
-			Sort<T>::Merge(arr, a, b, c);
+			Sort<T, BinaryPredicate>::Merge(arr, a, b, c, op, eq);
 			indexlist.PushFront(c);
 			indexlist.PushFront(a);
 		}
 	}
-	template<class T>
-	void Sort<T>::MergeRPSort(T * const & arr, const int & size)
+	template<class T, class BinaryPredicate>
+	void Sort<T, BinaryPredicate>::MergeRPSort(T * const & arr, const int & size, BinaryPredicate op, BinaryPredicate eq)
 	{
-		MergeRP(arr, 0, size);
+		Sort<T, BinaryPredicate>::MergeRP(arr, 0, size, op, eq);
 	}
-	template<class T>
-	void Sort<T>::QuickSort(T * const & arr, const int & size, std::function<bool(const T&, const T&)> comp)
+	template<class T, class BinaryPredicate>
+	void Sort<T, BinaryPredicate>::QuickSort(T * const & arr, const int & size, BinaryPredicate op)
 	{
-		Sort<T>::QuickSortR(arr, 0, size, comp);
+		Sort<T, BinaryPredicate>::QuickSortR(arr, 0, size - 1, op);
 	}
 }
