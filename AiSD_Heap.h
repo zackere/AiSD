@@ -6,7 +6,7 @@ using namespace std;
 namespace AiSD
 {
 	template<class T>
-	class Heap :public PriorityQueue<T>
+	class Heap : public PriorityQueue<T>
 	{
 		T *data; //max_size+1 elements, data[0] is a sentinel
 		int size;

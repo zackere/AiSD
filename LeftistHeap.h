@@ -3,7 +3,7 @@
 namespace AiSD
 {
 	template<class T>
-	class LeftistHeap :public PriorityQueue<T>
+	class LeftistHeap : public PriorityQueue<T>
 	{
 	public:
 		void Insert(T elem);

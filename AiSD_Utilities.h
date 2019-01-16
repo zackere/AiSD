@@ -45,4 +45,13 @@ namespace AiSD
 		virtual ~PriorityQueue() {};
 	};
 
+	template<class T>
+	class Dictionary
+	{
+	public:
+		void Construct() = 0;
+		T* Search(const T&) = 0;
+		bool Insert(const T&) = 0;
+		bool Delete(const T&) = 0;
+	};
 }

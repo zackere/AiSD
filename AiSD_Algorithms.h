@@ -4,7 +4,7 @@
 
 #include "AiSD_Heap.h"
 #include "AiSD_List.h"
-
+#include <functional>
 namespace AiSD
 {
 	template<class T>
@@ -13,13 +13,16 @@ namespace AiSD
 		virtual void _() = 0;
 		static void Merge(T *const &arr, const int &a, const int &b, const int &c);
 		static void MergeRP(T *const &arr, const int &a, const int &b);
+		static int  Partition(T *const &arr, const int &l, const int &r, std::function<bool(const T&, const T&)> comp);
+		static void QuickSortR(T *const &arr, const int &l, const int &r, std::function<bool(const T&, const T&)> comp);
 	public:
 		// NOTE: after each of the algorithms arr is in nondecreasing order by default.
 		static void BubbleSort(T *const &arr,const int &size); // stable
 		static void InsertionSort(T *const &arr,const int &size); // stable
 		static void HeapSort(T *const &arr,const int &size); // unstable
 		static void MergeSort(T *const &arr, const int &size); // stable
-		static void MergeRPSort(T * const & arr, const int & size); // stable
+		static void MergeRPSort(T *const &arr, const int &size); // stable
+		static void QuickSort(T *const &arr, const int &size, std::function<bool(const T&,const T&)> comp=std::less<T>()); //stable
 	};
 	template<class T>
 	void Sort<T>::Merge(T * const & arr, const int & a, const int & b, const int & c)
@@ -76,6 +79,26 @@ namespace AiSD
 			);
 			Merge(arr, a, mid, b);
 		}
+	}
+	template<class T>
+	int Sort<T>::Partition(T * const & arr, const int & l, const int & r, std::function<bool(const T&, const T&)> comp)
+	{
+		T v = arr[r];
+		int i = l - 1;
+		for (int j = l; j < r; j++)
+		{
+			if (!(comp(arr[j], v)))
+				std::swap(arr[++i], arr[j]);
+			std::swap(arr[i + 1], arr[r]);
+		}
+		return i + 1;
+	}
+	template<class T>
+	void Sort<T>::QuickSortR(T * const & arr, const int & l, const int & r, std::function<bool(const T&, const T&)> comp)
+	{
+		int j = Sort<T>::Partition(arr,l, r, comp);
+		if (j - 1 > l) Sort<T>::QuickSortR(arr,l, j - 1, comp);
+		if (j + 1 < r) Sort<T>::QuickSortR(arr,j + 1, r, comp);
 	}
 	template<class T>
 	void Sort<T>::BubbleSort(T *const &arr,const int &size)
@@ -140,5 +163,10 @@ namespace AiSD
 	void Sort<T>::MergeRPSort(T * const & arr, const int & size)
 	{
 		MergeRP(arr, 0, size);
+	}
+	template<class T>
+	void Sort<T>::QuickSort(T * const & arr, const int & size, std::function<bool(const T&, const T&)> comp)
+	{
+		Sort<T>::QuickSortR(arr, 0, size, comp);
 	}
 }
