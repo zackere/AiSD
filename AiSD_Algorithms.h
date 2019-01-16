@@ -61,20 +61,9 @@ namespace AiSD
 	template<class T>
 	void Sort<T>::MergeRP(T *const & arr, const int & l, const int & r, BinaryPredicate op, BinaryPredicate eq)
 	{
-		if (r - l < 17)
+		if (r - l < 16)
 		{
-			int j, x;
-			for (int i = l + 1; i < r; i++)
-			{
-				j = i - 1;
-				x = std::move(arr[i]);
-				while (op(arr[j], x) && j >= l)
-				{
-					arr[j + 1] = std::move(arr[j]);
-					j--;
-				}
-				arr[j + 1] = x;
-			}
+			Sort<T>::InsertionSortRange(arr, l, r, op);
 		}
 		if (l + 1 < r)
 		{
