@@ -14,12 +14,13 @@ namespace AiSD
 		using BinaryPredicate = std::function<bool(const T&, const T&)>;
 
 		virtual void _() = 0;
-		static void Merge(T *const &arr, const int &l, const int &mid, const int &r, BinaryPredicate op, BinaryPredicate eq);
-		static void MergeRP(T *const &arr, const int &l, const int &r, BinaryPredicate op, BinaryPredicate eq);
-		static int  Partition(T *const &arr, const int &l, const int &r, BinaryPredicate op);
-		static void QuickSortR(T *const &arr, const int &l, const int &r, BinaryPredicate op);
-		static void InsertionSortRange(T *const &arr, const int &l, const int &r, BinaryPredicate op);
-		static void IntroSortR(T *const &arr, const int &l, const int &r, const int &size, BinaryPredicate op);
+		static void Merge(T *const &arr, const int &l, const int &mid, const int &r, BinaryPredicate &op, BinaryPredicate &eq);
+		static void MergeRP(T *const &arr, const int &l, const int &r, BinaryPredicate &op, BinaryPredicate &eq);
+		static int  Partition(T *const &arr, const int &l, const int &r, BinaryPredicate &op);
+		static void QuickSortR(T *const &arr, const int &l, const int &r, BinaryPredicate &op);
+		static void InsertionSortRange(T *const &arr, const int &l, const int &r, BinaryPredicate &op);
+		static void IntroSortR(T * const & arr, const int & l, const int & r, const int & part_bound, int &partitions, BinaryPredicate &op);
+		static void HeapSortRange(T *const &arr, const int &l, const int &r, BinaryPredicate &op);
 	public:
 		// NOTE: after each of the algorithms arr is in nondecreasing order by default.
 		static void BubbleSort(T *const &arr, const int &size, BinaryPredicate op = std::greater<T>()); // stable
@@ -31,7 +32,7 @@ namespace AiSD
 		static void IntroSort(T *const &arr, const int &size, BinaryPredicate op = std::greater<T>()); // stable
 	};
 	template<class T>
-	void Sort<T>::Merge(T * const & arr, const int & l, const int & mid, const int & r, BinaryPredicate op, BinaryPredicate eq)
+	void Sort<T>::Merge(T * const & arr, const int & l, const int & mid, const int & r, BinaryPredicate &op, BinaryPredicate &eq)
 	{
 		T *pom = new T[r - l];
 		for (int i = 0; i < r - l; i++)
@@ -59,7 +60,7 @@ namespace AiSD
 		delete[] pom;
 	}
 	template<class T>
-	void Sort<T>::MergeRP(T *const & arr, const int & l, const int & r, BinaryPredicate op, BinaryPredicate eq)
+	void Sort<T>::MergeRP(T *const & arr, const int & l, const int & r, BinaryPredicate &op, BinaryPredicate &eq)
 	{
 		if (r - l < 16)
 		{
@@ -76,10 +77,10 @@ namespace AiSD
 		}
 	}
 	template<class T>
-	int Sort<T>::Partition(T * const & arr, const int & l, const int & r, BinaryPredicate op)
+	int Sort<T>::Partition(T * const & arr, const int & l, const int & r, BinaryPredicate &op)
 	{
 		int mid = (l + r) / 2;
-		if(op(arr[l],arr[mid]))
+		if (op(arr[l], arr[mid]))
 			std::swap(arr[l], arr[mid]);
 		if (op(arr[l], arr[r]))
 			std::swap(arr[l], arr[r]);
@@ -96,7 +97,7 @@ namespace AiSD
 		return i + 1;
 	}
 	template<class T>
-	void Sort<T>::QuickSortR(T * const & arr, const int & l, const int & r, BinaryPredicate op)
+	void Sort<T>::QuickSortR(T * const & arr, const int & l, const int & r, BinaryPredicate &op)
 	{
 		if (l < r)
 		{
@@ -107,7 +108,7 @@ namespace AiSD
 		
 	}
 	template<class T>
-	void Sort<T>::InsertionSortRange(T *const &arr, const int &l, const int &r, BinaryPredicate op)
+	void Sort<T>::InsertionSortRange(T *const &arr, const int &l, const int &r, BinaryPredicate &op)
 	{
 		int j;
 		T x;
@@ -124,18 +125,33 @@ namespace AiSD
 		}
 	}
 	template<class T>
-	void Sort<T>::IntroSortR(T * const & arr, const int & l, const int & r, const int & size, BinaryPredicate op)
+	void Sort<T>::IntroSortR(T * const & arr, const int & l, const int & r, const int & part_bound, int &partitions, BinaryPredicate &op)
 	{
 		if (r - l < 16)
 		{
 			InsertionSortRange(arr, l, r + 1, op);
 		}
+		else if (partitions > part_bound)
+		{
+			Sort<T>::HeapSortRange(arr, l, r + 1, op);
+		}
 		else
 		{
 			int pivot = Sort<T>::Partition(arr, l, r, op);
-			Sort<T>::IntroSortR(arr, l, pivot - 1, size, op);
-			Sort<T>::IntroSortR(arr, pivot + 1, r, size, op);
+			partitions++;
+			Sort<T>::IntroSortR(arr, l, pivot - 1, part_bound, partitions, op);
+			Sort<T>::IntroSortR(arr, pivot + 1, r, part_bound, partitions, op);
 		}
+	}
+	template<class T>
+	void Sort<T>::HeapSortRange(T * const & arr, const int & l, const int & r, BinaryPredicate &op)
+	{
+		T *pom = new T[r - l];
+		for (int i = 0; i < r - l; i++) 
+			pom[i] = std::move(arr[l + i]);
+		Heap<T> heap(pom, r - l, r - l, op);
+		for (int i = 0; i < r - l; i++)
+			arr[r - i - 1] = heap.DeleteMax();
 	}
 	template<class T>
 	void Sort<T>::BubbleSort(T *const &arr, const int &size, BinaryPredicate op)
@@ -162,9 +178,7 @@ namespace AiSD
 	template<class T>
 	void Sort<T>::HeapSort(T *const &arr, const int &size, BinaryPredicate op)
 	{
-		Heap<T> heap(arr, size, size, op);
-		for (int i = 0; i < size; i++)
-			arr[size - i - 1] = heap.DeleteMax();
+		Sort<T>::HeapSortRange(arr, 0, size, op);
 	}
 	template<class T>
 	void Sort<T>::MergeSort(T * const & arr, const int & size, BinaryPredicate op, BinaryPredicate eq)
@@ -198,6 +212,7 @@ namespace AiSD
 	template<class T>
 	void Sort<T>::IntroSort(T * const & arr, const int & size, BinaryPredicate op)
 	{
-		Sort<T>::IntroSortR(arr, 0, size - 1, size, op);
+		int partitions = 1;
+		Sort<T>::IntroSortR(arr, 0, size - 1, 2 * size * log(size), partitions, op);
 	}
 }
