@@ -12,7 +12,6 @@ This repository contains implemented in C++ data structures discussed on course 
 * InsertionSort
 * HeapSort
 * MergeSort
-* Parallel MergeSort (requires ppl.h library)
 * QuickSort
 
 TODO: Intensive testing
