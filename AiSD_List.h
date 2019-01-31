@@ -7,6 +7,8 @@ namespace AiSD
 	template<class T>
 	class List
 	{
+		using UnaryPredicate = std::function<bool(const &T)>;
+	private:
 		ListNode<T> *head, *tail;
 		unsigned int size;
 		void SwapNodes(ListNode<T> &p1, ListNode<T> &p2);
@@ -24,7 +26,7 @@ namespace AiSD
 		void PopFront();
 		void PopBack();
 		void Clear();
-		void RemoveIf(function<bool(T)> UnaryPredicate);
+		void RemoveIf(UnaryPredicate op);
 		void BubbleSort();
 		void InsertionSort();
 		T GetFront() const;
@@ -34,14 +36,6 @@ namespace AiSD
 		friend std::ostream& operator<<(std::ostream &out, const List<T> &list);
 		List<T>& operator=(const List<T> &list);
 		List<T>& operator=(List<T> &&list);
-
-		class iterator
-		{
-		public:
-			iterator();
-			iterator(const iterator &it);
-			~iterator();
-		};
 	};
 	template<class T>
 	void List<T>::SwapNodes(ListNode<T> &p1, ListNode<T> &p2)
@@ -214,12 +208,12 @@ namespace AiSD
 		while (!this->IsEmpty()) this->PopFront();
 	}
 	template<class T>
-	void List<T>::RemoveIf(function<bool(T)> UnaryPredicate)
+	void List<T>::RemoveIf(UnaryPredicate op)
 	{
 		ListNode<T> **p = &this->head;
 		while (*p != nullptr)
 		{
-			if (UnaryPredicate((*p)->value)) RemoveNode(**p);
+			if (op((*p)->value)) RemoveNode(**p);
 			else p = &((*p)->next);
 		}
 	}
