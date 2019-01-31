@@ -5,14 +5,16 @@ This repository contains implemented in C++ data structures discussed on course 
 * Stack
 * Queue
 * Heap
-* Beap (in progess)
+* Beap
 
 ## Implemented sorting algorithms:
 * BubbleSort
 * InsertionSort
+* SelectionSort
 * HeapSort
 * MergeSort
 * QuickSort
+* IntroSort
 
 TODO: Intensive testing
 #### Authors:
