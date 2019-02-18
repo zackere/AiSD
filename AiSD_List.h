@@ -7,7 +7,7 @@ namespace AiSD
 	template<class T>
 	class List
 	{
-		using UnaryPredicate = std::function<bool(const &T)>;
+		using UnaryPredicate = std::function<bool(const T&)>;
 	private:
 		ListNode<T> *head, *tail;
 		unsigned int size;
